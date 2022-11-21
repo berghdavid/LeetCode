@@ -5,19 +5,31 @@ struct ListNode {
 	struct ListNode *next;
 };
 
-struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2)
+struct ListNode* initListNode(int val, struct ListNode* next)
 {
-	struct ListNode*	inputIterator;
-	struct ListNode*	resultIterator;
-	struct ListNode*	result;
+	struct ListNode*	p;
 
-	result = malloc(sizeof(struct ListNode));
-	result->val = 0;
+	p = malloc(sizeof(struct ListNode));
+	p->val = val;
+	p->next = next;
 
-	addNodes(l1, result);
-	addNodes(l2, result);
+	return p;
+}
 
-	return result;
+void checkDigits(struct ListNode* l)
+{
+	if (l->val > 9) {
+		l->val -= 10;
+		if (l->next == NULL) {
+			l->next = initListNode(1, NULL);
+		} else {
+			l->next->val += 1;
+		}
+	}
+
+	if (l->next != NULL) {
+		checkDigits(l->next);
+	}
 }
 
 void addNodes(struct ListNode* l, struct ListNode* result)
@@ -28,38 +40,31 @@ void addNodes(struct ListNode* l, struct ListNode* result)
 	inputIterator = l;
 	resultIterator = result;
 	resultIterator->val += inputIterator->val;
-	checkDigit(resultIterator);
 
 	while (inputIterator->next != NULL) {
 		inputIterator = inputIterator->next;
 
 		if (resultIterator->next == NULL) {
-			resultIterator->next = malloc(sizeof(struct ListNode));
-			resultIterator->next->val = 0;
+			resultIterator->next = initListNode(0, NULL);
 		}
 		resultIterator = resultIterator->next;
 		resultIterator->val += inputIterator->val;
-		checkDigit(resultIterator);
 	}
 }
 
-void checkDigit(struct ListNode* l1)
+struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2)
 {
-	if (l1->val > 9) {
-		if (l1->next == NULL) {
-			l1->next = malloc(sizeof(struct ListNode));
-			l1->val = 1;
-		} else {
-			l1->next->val += 1;
-		}
-	}
-}
+	struct ListNode*	inputIterator;
+	struct ListNode*	resultIterator;
+	struct ListNode*	result;
 
-void printList(struct ListNode* p)
-{
-	while (p != NULL) {
-		printf("->%d", p->val);
-		p = p->next;
-	}
-	printf("\n");
+	result = malloc(sizeof(struct ListNode));
+	result->val = 0;
+	result->next = NULL;
+
+	addNodes(l1, result);
+	addNodes(l2, result);
+	checkDigits(result);
+
+	return result;
 }
